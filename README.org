@@ -1,0 +1,27 @@
+* Search and insert the right issue at "Fixes #"
+
+Goal: In a magit commit buffer, I want to complete the issue when I type
+"Fixes #".
+
+I was jealous about Sublime.
+
+https://cloud.githubusercontent.com/assets/5016978/6471672/e36e8c00-c1a1-11e4-91a1-dd5481d57c36.png
+
+This is now done with Helm.
+
+** Usage
+Activate the minor mode
+: M-x git-commit-insert-issue-mode
+
+In  a magit  commit  buffer (=git-commit-mode=),  type  "Fixes #"  and
+choose the issue from the helm list.
+
+** Dependencies
+
+- [[https://github.com/inkel/github-issues.el][github-issues]] (NOT in melpa)
+- helm
+
+** Todo
+
+- everything
+- and gitlab.
