@@ -10,22 +10,25 @@
        (project-name (or project-name (projectile-project-name)))
        (issues (github-api-repository-issues username project-name)))
   (if (string= (plist-get issues ':message) "Not Found")
-      "Not Found"
+      `(,(concat "Not found with user " (git-username)) )
     (progn
       ;;todo: watch for api rate limit.
       (setq issues-project (--map
-                            (format "%i - %s" (plist-get it ':number) (plist-get it ':title))
+                            (format "#%i - %s" (plist-get it ':number) (plist-get it ':title))
                             issues))
       ))))
 
 
-(setq issues-helm-source
-      '((name . "HELM at the Emacs")
-        (candidates . issues-get-issues) ;; BUG: "must be a function"
+(defvar issues-helm-source
+      '((name . "Select an issue")
+        (candidates . issues-get-issues)
         (action . (lambda (candidate)
                     candidate))))
 
-(helm :sources '(issues-helm-source))
+(defun git-commit-insert-issue-helm ()
+  (interactive)
+  (helm :sources '(issues-helm-source))
+)
 
 
 (define-minor-mode git-commit-insert-issue-mode
