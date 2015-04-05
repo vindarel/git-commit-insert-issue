@@ -1,3 +1,4 @@
+(require 'helm)
 (require 'github-issues)  ;; not in MELPA
 (require 's)
 (require 'projectile)
