@@ -17,6 +17,9 @@ In a magit  commit buffer (=git-commit-mode=), type "Fixes  #" (or [[https://hel
 other keyword understood by github]]) and choose the issue from the helm
 list.
 
+So to always activate it:
+: (add-hook 'git-commit-mode-hook 'git-commit-insert-issue-mode)
+
 ** Dependencies
 
 - [[https://github.com/inkel/github-issues.el][github-issues]] (NOT in melpa)
