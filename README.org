@@ -3,7 +3,7 @@
 Goal: In a magit commit buffer, I want to complete the issue when I type
 "Fixes #".
 
-I was jealous about Sublime.
+I was jealous about a SublimeText plugin.
 
 https://cloud.githubusercontent.com/assets/5016978/6471672/e36e8c00-c1a1-11e4-91a1-dd5481d57c36.png
 
@@ -13,8 +13,9 @@ This is now done with Helm.
 Activate the minor mode
 : M-x git-commit-insert-issue-mode
 
-In  a magit  commit  buffer (=git-commit-mode=),  type  "Fixes #"  and
-choose the issue from the helm list.
+In a magit  commit buffer (=git-commit-mode=), type "Fixes  #" (or [[https://help.github.com/articles/closing-issues-via-commit-messages/][any
+other keyword understood by github]]) and choose the issue from the helm
+list.
 
 ** Dependencies
 
