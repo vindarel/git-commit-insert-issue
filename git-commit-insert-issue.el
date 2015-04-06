@@ -33,6 +33,8 @@
   (s-trim (shell-command-to-string "git config user.name")))
 
 (defun issues-get-issues (&optional username project-name)
+  "Get all the issues from the current project.
+   Return a list."
   (let* ((username (or username (git-username)))
          (project-name (or project-name (projectile-project-name)))
          (issues (github-api-repository-issues username project-name)))
@@ -45,6 +47,19 @@
                               issues))
         ))))
 
+(defvar github-close-issue-kw '("fixes" "fix" "fixed"
+                                "close" "closes" "closed"
+                                "resolve" "resolves" "resolved"))
+
+(defun git-commit-issues--construct-regexp (kw)
+  "From a list of words, constructs a regexp to match each one at
+  a start of a line followed by a blank space:
+  (\"fix\" \"close\") => \"^fix |^close \" "
+  (let ((regexp (concat "^" (car kw) " ")))
+    (concat regexp (mapconcat (lambda (it) (concat "\\|^" it " "))
+               (cdr kw)
+               ""))))
+
 (define-minor-mode git-commit-insert-issue-mode
   "See the issues when typing 'Fixes #' in a commit message."
   :global nil
@@ -54,7 +69,7 @@
         (define-key git-commit-mode-map "#"
           (lambda () (interactive)
             (setq issues-project (issues-get-issues))
-             (if (looking-back "^Fixes ")
+             (if (looking-back (git-commit-issues--construct-regexp github-close-issue-kw))
                  (insert (git-commit-insert-issue-helm))
                (self-insert-command 1))))
         )
