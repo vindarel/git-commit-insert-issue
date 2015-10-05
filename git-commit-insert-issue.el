@@ -14,10 +14,10 @@
 ;; along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 (require 'helm)
-(require 'github-issues)  ;; not in MELPA
 (require 's)
 (require 'projectile)
-;; todo: include the required package in the repo.
+
+(load-file "github-issues.el") ;; not in MELPA, local copy.
 
 (defvar issues-helm-source
       '((name . "Select an issue")
