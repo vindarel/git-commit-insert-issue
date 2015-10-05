@@ -5,7 +5,7 @@ Goal: In a magit commit buffer, I want to complete the issue when I type
 
 I was jealous about a SublimeText plugin, this is now done with Helm.
 
-img.png
+[[./img.png]]
 
 # https://cloud.githubusercontent.com/assets/5016978/6471672/e36e8c00-c1a1-11e4-91a1-dd5481d57c36.png
 
@@ -22,7 +22,7 @@ So to always activate it:
 
 ** Dependencies
 
-- [[https://github.com/inkel/github-issues.el][github-issues]] (NOT in melpa)
+- [[https://github.com/inkel/github-issues.el][github-issues]] (not in melpa, but we included a copy)
 - helm
 - projectile
 - s.el
