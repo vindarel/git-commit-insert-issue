@@ -3,11 +3,11 @@
 Goal: In a magit commit buffer, I want to complete the issue when I type
 "Fixes #".
 
-I was jealous about a SublimeText plugin.
+I was jealous about a SublimeText plugin, this is now done with Helm.
 
-https://cloud.githubusercontent.com/assets/5016978/6471672/e36e8c00-c1a1-11e4-91a1-dd5481d57c36.png
+img.png
 
-This is now done with Helm.
+# https://cloud.githubusercontent.com/assets/5016978/6471672/e36e8c00-c1a1-11e4-91a1-dd5481d57c36.png
 
 ** Usage
 Activate the minor mode
@@ -24,8 +24,19 @@ So to always activate it:
 
 - [[https://github.com/inkel/github-issues.el][github-issues]] (NOT in melpa)
 - helm
+- projectile
+- s.el
+
+** Issues
+
+- if you play too much with it, you can reach github's rate limit.
+
+https://github.com/inkel/github-issues.el/issues
+- doesn't work on private repos
+
 
 ** Todo
 
-- everything
-- and gitlab.
+- tests
+- cache
+- gitlab

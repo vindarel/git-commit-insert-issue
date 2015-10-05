@@ -17,6 +17,7 @@
 (require 'github-issues)  ;; not in MELPA
 (require 's)
 (require 'projectile)
+;; todo: include the required package in the repo.
 
 (defvar issues-helm-source
       '((name . "Select an issue")
@@ -47,9 +48,9 @@
                               issues))
         ))))
 
-(defvar github-close-issue-kw '("fixes" "fix" "fixed"
+(defvar github-close-issue-kw '("Fixes" "fixes" "fix" "fixed"
                                 "close" "closes" "closed"
-                                "resolve" "resolves" "resolved"))
+                                "resolve" "resolves" "resolved") "List of keywords that github accepts to close issues.")
 
 (defun git-commit-issues--construct-regexp (kw)
   "From a list of words, constructs a regexp to match each one at
@@ -59,6 +60,14 @@
     (concat regexp (mapconcat (lambda (it) (concat "\\|^" it " "))
                (cdr kw)
                ""))))
+
+(defun issues-ask-issues ()
+  "Ask for the issue to insert."
+  (interactive)
+  ;; This helm call doesn't work alone, but isn't actually needed.
+  ;; (helm :sources '(issues-helm-source)))
+  (insert (ido-completing-read "Choose the issue: " (issues-get-issues))))
+
 
 (define-minor-mode git-commit-insert-issue-mode
   "See the issues when typing 'Fixes #' in a commit message."
