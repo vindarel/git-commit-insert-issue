@@ -31,8 +31,20 @@ So to always activate it:
 
 - if you play too much with it, you can reach github's rate limit.
 
-https://github.com/inkel/github-issues.el/issues
-- doesn't work on private repos
+[[https://github.com/inkel/github-issues.el/issues][Issues of github-issues.el]] :
+
+# export: both uses an org table with many columns. Eval with C-c-c
+#+BEGIN_SRC emacs-lisp
+#2 - MELPA ?
+#1 - Doesn't work on private repos.
+(--map (insert (concat it "\n")) (issues-get-issues "inkel" "github-issues.el"))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp :exports none
+;;(issues-get-issues "inkel" "github-issues.el")
+#+END_SRC
+
 
 
 ** Todo
