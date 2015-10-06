@@ -1,6 +1,17 @@
-;; git-commit-insert-issue.el
+;;; git-commit-insert-issue.el --- Get issues list when typing "Fixes #"
 
 ;; Copyright (C) 2015 vindarel <ehvince@mailz.org>
+
+;;; Author: Vindarel
+;;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
+;;; Keywords: git, commit, issues
+;;; Version: 0.1
+;;; Package-Requires: ((helm), (projectile), (s))
+;;; Summary: Get issues list when typeng "Fixes #" in a commit message
+
+;; This file is NOT part of GNU Emacs.
+
+;;; Licence:
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -12,6 +23,14 @@
 ;; GNU General Public License for more details.
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;
+;; This library provides a minor mode and an interactive function to
+;; fetch issues of your project when you type "Fixes #" in a commit
+;; message.
+
+;;; Code:
 
 (require 'helm)
 (require 's)
