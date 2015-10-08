@@ -5,8 +5,8 @@
 ;; Author: Vindarel
 ;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
 ;; Keywords: git, commit, issues
-;; Version: 0.1
-;; Package-Requires: ((helm 0), (projectile 0), (s 0))
+;; Version: 0.1.0
+;; Package-Requires: ((helm "0") (projectile "0") (s "0"))
 ;; Summary: Get issues list when typeng "Fixes #" in a commit message
 
 ;; This file is NOT part of GNU Emacs.
@@ -106,4 +106,5 @@
     ))
 
 (provide 'git-commit-insert-issue)
-;; git-commit-insert-issue ends here
+
+;;; git-commit-insert-issue.el ends here
