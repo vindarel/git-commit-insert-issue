@@ -35,8 +35,8 @@
 (require 'helm)
 (require 's)
 (require 'projectile)
-
-(load-file "./github-issues.el") ;; not in MELPA, local copy.
+(let ((load-path (cons nil load-path)))
+  (load-file "github-issues.el")) ;; not in MELPA, local copy.
 
 (defvar issues-helm-source
       '((name . "Select an issue")
