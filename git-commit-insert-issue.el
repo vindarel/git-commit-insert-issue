@@ -2,16 +2,14 @@
 
 ;; Copyright (C) 2015 vindarel <ehvince@mailz.org>
 
-;;; Author: Vindarel
-;;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
-;;; Keywords: git, commit, issues
-;;; Version: 0.1
-;;; Package-Requires: ((helm), (projectile), (s))
-;;; Summary: Get issues list when typeng "Fixes #" in a commit message
+;; Author: Vindarel
+;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
+;; Keywords: git, commit, issues
+;; Version: 0.1
+;; Package-Requires: ((helm 0), (projectile 0), (s 0))
+;; Summary: Get issues list when typeng "Fixes #" in a commit message
 
 ;; This file is NOT part of GNU Emacs.
-
-;;; Licence:
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -33,12 +31,13 @@
 ;;; Code:
 
 (require 'helm)
-(require 's)
 (require 'projectile)
+(require 's)
+
 (let ((load-path (cons nil load-path)))
   (load-file "github-issues.el")) ;; not in MELPA, local copy.
 
-(defvar issues-helm-source
+(defvar git-commit-insert-issue-helm-source
       '((name . "Select an issue")
         (candidates . issues-get-issues)
         (action . (lambda (candidate)
@@ -52,7 +51,8 @@
 (defun git-username ()
   (s-trim (shell-command-to-string "git config user.name")))
 
-(defun issues-get-issues (&optional username project-name)
+;;;###autoload
+(defun git-commit-insert-issue-get-issues (&optional username project-name)
   "Get all the issues from the current project.
    Return a list."
   (let* ((username (or username (git-username)))
@@ -62,16 +62,16 @@
         `(,(concat "Not found with user " (git-username)) )
       (progn
         ;;todo: watch for api rate limit.
-        (setq issues-project (--map
+        (setq git-commit-insert-issue-project-issues (--map
                               (format "#%i - %s" (plist-get it ':number) (plist-get it ':title))
                               issues))
         ))))
 
-(defvar github-close-issue-kw '("Fixes" "fixes" "fix" "fixed"
+(defvar git-commit-insert-issue-github-keywords '("Fixes" "fixes" "fix" "fixed"
                                 "close" "closes" "closed"
                                 "resolve" "resolves" "resolved") "List of keywords that github accepts to close issues.")
 
-(defun git-commit-issues--construct-regexp (kw)
+(defun git-commit-insert-issue--construct-regexp (kw)
   "From a list of words, constructs a regexp to match each one at
   a start of a line followed by a blank space:
   (\"fix\" \"close\") => \"^fix |^close \" "
@@ -80,14 +80,14 @@
                (cdr kw)
                ""))))
 
-(defun issues-ask-issues ()
+(defun git-commit-insert-issue--ask-issues ()
   "Ask for the issue to insert."
   (interactive)
   ;; This helm call doesn't work alone, but isn't actually needed.
   ;; (helm :sources '(issues-helm-source)))
-  (insert (ido-completing-read "Choose the issue: " (issues-get-issues))))
+  (insert (ido-completing-read "Choose the issue: " (git-commit-insert-issue-get-issues))))
 
-
+;;;###autoload
 (define-minor-mode git-commit-insert-issue-mode
   "See the issues when typing 'Fixes #' in a commit message."
   :global nil
@@ -96,8 +96,9 @@
       (progn
         (define-key git-commit-mode-map "#"
           (lambda () (interactive)
-            (setq issues-project (issues-get-issues))
-             (if (looking-back (git-commit-issues--construct-regexp github-close-issue-kw))
+            (setq git-commit-insert-issue-project-issues (git-commit-insert-issue-get-issues))
+             (if (looking-back
+                  (git-commit-insert-issue--construct-regexp git-commit-insert-issue-github-keywords))
                  (insert (git-commit-insert-issue-helm))
                (self-insert-command 1))))
         )
