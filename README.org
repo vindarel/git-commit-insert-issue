@@ -1,3 +1,5 @@
+[[http://melpa.org/#/git-commit-insert-issue][file:http://melpa.org/packages/git-commit-insert-issue-badge.svg]]
+
 * Search and insert the right issue at "Fixes #"
 
 Goal: In a magit commit buffer, I want to complete the issue when I type
@@ -5,8 +7,9 @@ Goal: In a magit commit buffer, I want to complete the issue when I type
 
 I was jealous about a SublimeText plugin, this is now done with Helm.
 
-[[./img.png]]
-
+#+BEGIN_HTML
+ <img src="https://gitlab.com/emacs-stuff/git-commit-insert-issue/raw/master/img.png" </img>
+#+END_HTML
 # https://cloud.githubusercontent.com/assets/5016978/6471672/e36e8c00-c1a1-11e4-91a1-dd5481d57c36.png
 
 ** Usage
@@ -20,7 +23,18 @@ list.
 So to always activate it:
 : (add-hook 'git-commit-mode-hook 'git-commit-insert-issue-mode)
 
-** Dependencies
+** Installation
+
+This package is in [[http://wikemacs.org/wiki/MELPA][MELPA]], so you can install it with [[http://wikemacs.org/wiki/Package.el][package.el]]:
+
+: M-x package-install RET git-commit-insert-issue RET
+
+(you may need a =M-x package-refresh-contents=).
+
+Alternatively, you can download this  repo and call =M-x load-file= on the
+elisp source.
+
+*** Dependencies
 
 - [[https://github.com/inkel/github-issues.el][github-issues]] (not in melpa, but we included a copy)
 - helm
@@ -37,7 +51,7 @@ So to always activate it:
 #+BEGIN_SRC emacs-lisp
 #2 - MELPA ?
 #1 - Doesn't work on private repos.
-(--map (insert (concat it "\n")) (issues-get-issues "inkel" "github-issues.el"))
+(--map (insert (concat it "\n")) (git-commit-insert-issue-get-issues "inkel" "github-issues.el"))
 #+END_SRC
 
 
