@@ -36,10 +36,12 @@ elisp source.
 
 *** Dependencies
 
-- [[https://github.com/inkel/github-issues.el][github-issues]] (not in melpa, but we included a copy)
+- [[https://github.com/inkel/github-issues.el][github-issues]]
 - helm
 - projectile
 - s.el
+
+They are all in MELPA.
 
 ** Issues
 
@@ -49,9 +51,10 @@ elisp source.
 
 # export: both uses an org table with many columns. Eval with C-c-c
 #+BEGIN_SRC emacs-lisp
-#2 - MELPA ?
+(--map (insert (concat it "\n")) (git-commit-insert-issue-get-issues "inkel" "github-issues.el"))#5 - Add autoload marker
+#4 - Declare buffer local variables as global variable
+#3 - Add package footer for packaging convention
 #1 - Doesn't work on private repos.
-(--map (insert (concat it "\n")) (git-commit-insert-issue-get-issues "inkel" "github-issues.el"))
 #+END_SRC
 
 

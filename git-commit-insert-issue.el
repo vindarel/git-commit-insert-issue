@@ -6,8 +6,8 @@
 ;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
 ;; Keywords: git, commit, issues
 ;; Version: 0.1.0
-;; Package-Requires: ((helm "0") (projectile "0") (s "0"))
-;; Summary: Get issues list when typeng "Fixes #" in a commit message
+;; Package-Requires: ((helm "0") (projectile "0") (s "0") (github-issues "0"))
+;; Summary: Get issues list when typeng "Fixes #" in a commit message. github only atm.
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -33,9 +33,7 @@
 (require 'helm)
 (require 'projectile)
 (require 's)
-
-(let ((load-path (cons nil load-path)))
-  (load-file "github-issues.el")) ;; not in MELPA, local copy.
+(require 'github-issues)
 
 (defvar git-commit-insert-issue-helm-source
       '((name . "Select an issue")
