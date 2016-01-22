@@ -43,7 +43,7 @@
 
 (defun git-commit-insert-issue-helm ()
   (interactive)
-  (helm :sources '(issues-helm-source))
+  (helm :sources '(git-commit-insert-issue-helm-source))
 )
 
 (defun git-username ()
