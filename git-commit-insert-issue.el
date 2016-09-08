@@ -6,7 +6,7 @@
 ;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
 ;; Keywords: git, commit, issues
 ;; Version: 0.1.0
-;; Package-Requires: ((helm "0") (projectile "0") (s "0") (github-issues "0"))
+;; Package-Requires: ((helm "0") (projectile "0") (s "0") (github-issues "0") (gitlab "0"))
 ;; Summary: Get issues list when typeng "Fixes #" in a commit message. github only atm.
 
 ;; This file is NOT part of GNU Emacs.
@@ -34,6 +34,7 @@
 (require 'projectile)
 (require 's)
 (require 'github-issues)
+(require 'gitlab)
 
 (defvar git-commit-insert-issue-helm-source
       '((name . "Select an issue")
@@ -48,6 +49,21 @@
 
 (defun git-username ()
   (s-trim (shell-command-to-string "git config user.name")))
+
+;; Gitlab
+;; - [X] Get opened issues from gitlab
+;; - [ ] Choose an issue with heml/ido/ivy
+;; - [ ] choose github or gitlab, depending on project.
+(defun git-commit-insert-issue-gitlab-issues ()
+  ""
+  (interactive)
+  (let* ((username (git-username))
+         (project-name (projectile-project-name))
+         (user-project (format "%s/%s" username project-name))
+         (project (gitlab-get-project user-project))
+         (project-id (assoc-default 'id project)))
+    ;;XXX: needs unmerged feature of emacs-gitlab. See PR #40.
+    (gitlab-list-project-issues user-project nil nil '((state . "opened")))))
 
 ;;;###autoload
 (defun git-commit-insert-issue-get-issues (&optional username project-name)
