@@ -5,6 +5,8 @@
 Goal: In a magit commit buffer, I want to complete the issue when I type
 "Fixes #".
 
+For Github and Gitlab (/Gitlab is usuable but uncomplete, see below/).
+
 I was jealous about a SublimeText plugin, this is now done with Helm.
 
 #+BEGIN_HTML
@@ -68,4 +70,11 @@ They are all in MELPA.
 
 - tests
 - cache
-- gitlab
+- gitlab integration:  WIP
+  - [X] Get opened issues from gitlab
+  - [X] Get a list of strings with "id - title"
+  - [X] choose with ido and insert in buffer: =M-x git-commit-insert-issue-gitlab-insert=.
+  - [ ] choose github or gitlab, depending on project.
+  - [ ]  make it work for  projects in groups (i.e,  "emacs-stuff/project" and
+    not "vindarel".
+  - [ ] error handling (bad project name, etc)
