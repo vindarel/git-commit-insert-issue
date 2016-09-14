@@ -50,10 +50,6 @@
 (defun git-username ()
   (s-trim (shell-command-to-string "git config user.name")))
 
-;; Gitlab
-;; - [X] Get opened issues from gitlab
-;; - [X] Get a list of strings with "id - title"
-;; - [ ] choose github or gitlab, depending on project.
 (defun git-commit-insert-issue-gitlab-issues ()
   ""
   (interactive)
@@ -68,7 +64,7 @@
 (defun git-commit-insert-issue-gitlab-issues-format ()
   "Get issues and return a list of strings formatted with '#id - title'"
   (--map (format "#%i - %s" (assoc-default 'iid it) (assoc-default 'title it))
-                 issues))
+                 (git-commit-insert-issue-gitlab-issues)))
 
 ;;;###autoload
 (defun git-commit-insert-issue-get-issues (&optional username project-name)
@@ -106,7 +102,12 @@
   ;; (helm :sources '(issues-helm-source)))
   (insert (ido-completing-read "Choose the issue: " (git-commit-insert-issue-get-issues))))
 
-;;;###autoload
+(defun git-commit-insert-issue-gitlab-insert ()
+  "Choose and insert the issue id"
+  (interactive)
+  (insert (ido-completing-read "Gitlab issue ? " (git-commit-insert-issue-gitlab-issues-format))))
+
+;;;###Autoload
 (define-minor-mode git-commit-insert-issue-mode
   "See the issues when typing 'Fixes #' in a commit message."
   :global nil
