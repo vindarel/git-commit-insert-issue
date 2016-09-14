@@ -52,7 +52,7 @@
 
 ;; Gitlab
 ;; - [X] Get opened issues from gitlab
-;; - [ ] Choose an issue with heml/ido/ivy
+;; - [X] Get a list of strings with "id - title"
 ;; - [ ] choose github or gitlab, depending on project.
 (defun git-commit-insert-issue-gitlab-issues ()
   ""
@@ -64,6 +64,11 @@
          (project-id (assoc-default 'id project)))
     ;;XXX: needs unmerged feature of emacs-gitlab. See PR #40.
     (gitlab-list-project-issues user-project nil nil '((state . "opened")))))
+
+(defun git-commit-insert-issue-gitlab-issues-format ()
+  "Get issues and return a list of strings formatted with '#id - title'"
+  (--map (format "#%i - %s" (assoc-default 'iid it) (assoc-default 'title it))
+                 issues))
 
 ;;;###autoload
 (defun git-commit-insert-issue-get-issues (&optional username project-name)
