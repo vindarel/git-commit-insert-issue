@@ -75,6 +75,8 @@ They are all in MELPA.
   - [X] Get a list of strings with "id - title"
   - [X] choose with ido and insert in buffer: =M-x git-commit-insert-issue-gitlab-insert=.
   - [ ] choose github or gitlab, depending on project.
-  - [ ]  make it work for  projects in groups (i.e,  "emacs-stuff/project" and
+    - [X] get the remote server in git config
+  - [X]  make it work for  projects in groups (i.e,  "emacs-stuff/project" and
     not "vindarel".
+    - [X] get the group name in git config
   - [ ] error handling (bad project name, etc)

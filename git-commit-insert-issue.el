@@ -107,6 +107,33 @@
   (interactive)
   (insert (ido-completing-read "Gitlab issue ? " (git-commit-insert-issue-gitlab-issues-format))))
 
+(defun insert-issue--get-remotes ()
+  "Get this repo's remote names"
+  (s-split "\n" (s-trim (shell-command-to-string "git remote"))))
+
+(defun insert-issue--get-remote-url ()
+  "Get the url of the first remote" ;XXX: shall we ask if many remotes ?
+  (shell-command-to-string (format "git config remote.%s.url" (-first-item (insert-issue--get-remotes)))))
+
+(defun insert-issue--get-server ()
+  "Check the gitlab host.
+   From git@server.com:group/project.git, get server.com"
+  (let* ((url (insert-issue--get-remote-url)) ;; git@gitlab.com:emacs-stuff/project-name.git
+         (server-group-name (-first-item (cdr (s-split "@" url)))) ;; gitlab.com:emacs-stuff/project-name.git
+         (server (car (s-split ":" server-group-name))) ;; gitlab.com
+         )
+  server))
+
+(defun insert-issue--get-group ()
+  "The remote group can be different than the author.
+   From git@server.com:group/project.git, get group"
+  (let* ((url (insert-issue--get-remote-url)) ;; git@gitlab.com:emacs-stuff/project-name.git
+         (server-group-name (-first-item (cdr (s-split "@" url)))) ;; gitlab.com:emacs-stuff/project-name.git
+         (group-project (cdr (s-split ":" server-group-name))) ;; emacs-stuff/project-name.git
+         (group (-first-item (s-split "/" (-first-item group-project)))) ;; emacs-stuff
+         )
+    group))
+
 ;;;###Autoload
 (define-minor-mode git-commit-insert-issue-mode
   "See the issues when typing 'Fixes #' in a commit message."
