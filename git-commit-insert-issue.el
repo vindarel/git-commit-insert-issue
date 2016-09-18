@@ -57,7 +57,6 @@
          (user-project (format "%s/%s" username project-name))
          (project (gitlab-get-project user-project))
          (project-id (assoc-default 'id project)))
-    ;;XXX: needs unmerged feature of emacs-gitlab. See PR #40.
     (gitlab-list-project-issues user-project nil nil '((state . "opened")))))
 
 (defun git-commit-insert-issue-gitlab-issues-format ()
