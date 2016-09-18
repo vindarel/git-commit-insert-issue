@@ -64,12 +64,10 @@
   (--map (format "#%i - %s" (assoc-default 'iid it) (assoc-default 'title it))
                  (git-commit-insert-issue-gitlab-issues)))
 
-;;;###autoload
 (defun git-commit-insert-issue-github-issues (&optional username project-name)
   "Return a plist of github issues, raw from the api request."
   (github-api-repository-issues username project-name))
 
-;;;###autoload
 (defun git-commit-insert-issue-github-issues-format (&optional username project-name)
   "Get all the issues from the current project.
    Return a list of formatted strings: '#id - title'"
@@ -85,6 +83,13 @@
                               issues))
         ))))
 
+(defun insert-issue-get-issues-github-or-gitlab-format ()
+  "Get the list of issues, from either github or gitlab."
+  (if (string-equal "github.com" (insert-issue--get-server))
+      (git-commit-insert-issue-github-issues-format)
+     ;; for every other choice it's gitlab atm, since github isn't self hosted it won't have other names.
+    (git-commit-insert-issue-gitlab-issues-format)))
+
 (defvar git-commit-insert-issue-github-keywords '("Fixes" "fixes" "fix" "fixed"
                                 "close" "closes" "closed"
                                 "resolve" "resolves" "resolved") "List of keywords that github accepts to close issues.")
@@ -98,12 +103,14 @@
                (cdr kw)
                ""))))
 
-(defun git-commit-insert-issue--ask-issues ()
+;;;###autoload
+(defun git-commit-insert-issue-ask-issues ()
   "Ask for the issue to insert."
   (interactive)
   ;; This helm call doesn't work alone, but isn't actually needed.
   ;; (helm :sources '(issues-helm-source)))
-  (insert (ido-completing-read "Choose the issue: " (git-commit-insert-issue-get-issues))))
+  (insert (ido-completing-read "Choose the issue: "
+                               (insert-issue-get-issues-github-or-gitlab-format))))
 
 (defun git-commit-insert-issue-gitlab-insert ()
   "Choose and insert the issue id"
