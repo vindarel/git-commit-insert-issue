@@ -67,7 +67,12 @@
                  (git-commit-insert-issue-gitlab-issues)))
 
 ;;;###autoload
-(defun git-commit-insert-issue-get-issues (&optional username project-name)
+(defun git-commit-insert-issue-github-issues (&optional username project-name)
+  "Return a plist of github issues, raw from the api request."
+  (github-api-repository-issues username project-name))
+
+;;;###autoload
+(defun git-commit-insert-issue-github-issues-format (&optional username project-name)
   "Get all the issues from the current project.
    Return a list of formatted strings: '#id - title'"
   (let* ((username (or username (insert-issue--get-group)))
@@ -171,7 +176,7 @@
       (progn
         (define-key git-commit-mode-map "#"
           (lambda () (interactive)
-            (setq git-commit-insert-issue-project-issues (git-commit-insert-issue-get-issues))
+            (setq git-commit-insert-issue-project-issues (git-commit-insert-issue-github-issues-format))
              (if (looking-back
                   (git-commit-insert-issue--construct-regexp git-commit-insert-issue-github-keywords))
                  (insert (git-commit-insert-issue-helm))
