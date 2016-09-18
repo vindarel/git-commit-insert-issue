@@ -69,10 +69,10 @@
 ;;;###autoload
 (defun git-commit-insert-issue-get-issues (&optional username project-name)
   "Get all the issues from the current project.
-   Return a list."
-  (let* ((username (or username (git-username)))
+   Return a list of formatted strings: '#id - title'"
+  (let* ((username (or username (insert-issue--get-group)))
          (project-name (or project-name (projectile-project-name)))
-         (issues (github-api-repository-issues username project-name)))
+         (issues (git-commit-insert-issue-github-issues username project-name)))
     (if (string= (plist-get issues ':message) "Not Found")
           (error (concat "Nothing found with user " (git-username)))
       (progn
