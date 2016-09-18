@@ -74,7 +74,7 @@
          (project-name (or project-name (projectile-project-name)))
          (issues (github-api-repository-issues username project-name)))
     (if (string= (plist-get issues ':message) "Not Found")
-        `(,(concat "Not found with user " (git-username)) )
+          (error (concat "Nothing found with user " (git-username)))
       (progn
         ;;todo: watch for api rate limit.
         (setq git-commit-insert-issue-project-issues (--map
