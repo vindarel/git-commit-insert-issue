@@ -51,9 +51,8 @@
   (s-trim (shell-command-to-string "git config user.name")))
 
 (defun git-commit-insert-issue-gitlab-issues ()
-  ""
-  (interactive)
-  (let* ((username (git-username))
+  "Return a list of the opened issues on gitlab."
+  (let* ((username (insert-issue--get-group))
          (project-name (projectile-project-name))
          (user-project (format "%s/%s" username project-name))
          (project (gitlab-get-project user-project))
