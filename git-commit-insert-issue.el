@@ -111,9 +111,24 @@
   "Get this repo's remote names"
   (s-split "\n" (s-trim (shell-command-to-string "git remote"))))
 
+(defun insert-issue--get-first-remote ()
+  "Get the first remote name found in git config. It should be the prefered one."
+  (let* ((first-remote
+          (with-temp-buffer
+            (insert-file-contents (concat (projectile-project-root) ".git/config"))
+            (if (search-forward "[remote \"")
+                (progn
+                  (buffer-substring-no-properties (line-beginning-position) (line-end-position))))))
+         (first-remote (car (cdr (s-split " " first-remote))))
+         (first-remote (s-replace "\"" "" first-remote))
+         (first-remote (s-chop-suffix "]" first-remote)))
+    first-remote))
+
 (defun insert-issue--get-remote-url ()
   "Get the url of the first remote" ;XXX: shall we ask if many remotes ?
-  (shell-command-to-string (format "git config remote.%s.url" (-first-item (insert-issue--get-remotes)))))
+  (shell-command-to-string (format "git config remote.%s.url"
+                                   ;; (-first-item (insert-issue--get-remotes))))) ;; -first-item may not be the one we want.
+                                   (insert-issue--get-first-remote))))
 
 (defun insert-issue--get-server ()
   "Check the gitlab host.
