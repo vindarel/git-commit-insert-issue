@@ -131,20 +131,33 @@
                                    (insert-issue--get-first-remote))))
 
 (defun insert-issue--get-server ()
-  "Check the gitlab host.
-   From git@server.com:group/project.git, get server.com"
+  "Check the git host.
+   From git@server.com:group/project.git or https://server.com/group/project, get server.com"
   (let* ((url (insert-issue--get-remote-url)) ;; git@gitlab.com:emacs-stuff/project-name.git
-         (server-group-name (-first-item (cdr (s-split "@" url)))) ;; gitlab.com:emacs-stuff/project-name.git
-         (server (car (s-split ":" server-group-name))) ;; gitlab.com
+         ;; Dealing with different protocols: git@foo:bar or https://foo/bar
+         ;; Could definitely be proper.
+         (server-group-name (if (s-contains? "@" url)
+                                (-first-item (cdr (s-split "@" url)))
+                              (if (s-contains? "://" url)
+                                  (-first-item (cdr (s-split "://" url)))))) ;; gitlab.com:emacs-stuff/project-name.git
+         (server (if (s-contains? ":" server-group-name)
+                     (car (s-split ":" server-group-name))
+                   (if (s-contains? "/" server-group-name)
+                       (car (s-split "/" server-group-name)))))
          )
   server))
 
 (defun insert-issue--get-group ()
   "The remote group can be different than the author.
    From git@server.com:group/project.git, get group"
+  ;; Again, dealing with git@ or https?://
   (let* ((url (insert-issue--get-remote-url)) ;; git@gitlab.com:emacs-stuff/project-name.git
-         (server-group-name (-first-item (cdr (s-split "@" url)))) ;; gitlab.com:emacs-stuff/project-name.git
-         (group-project (cdr (s-split ":" server-group-name))) ;; emacs-stuff/project-name.git
+         (server-group-name (if (s-contains? "@" url)
+                                (-first-item (cdr (s-split "@" url)))
+                              (car (cdr (s-split "://" url))))) ;; gitlab.com:emacs-stuff/project-name.git
+         (group-project (if (s-contains? ":" server-group-name)
+                            (cdr (s-split ":" server-group-name))
+                          (cdr (s-split "/" server-group-name)))) ;; emacs-stuff/project-name.git
          (group (-first-item (s-split "/" (-first-item group-project)))) ;; emacs-stuff
          )
     group))
