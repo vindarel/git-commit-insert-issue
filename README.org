@@ -53,7 +53,7 @@ They are all in MELPA.
 
 # export: both uses an org table with many columns. Eval with C-c-c
 #+BEGIN_SRC emacs-lisp
-(--map (insert (concat it "\n")) (git-commit-insert-issue-get-issues "inkel" "github-issues.el"))#5 - Add autoload marker
+(--map (insert (concat it "\n")) (git-commit-insert-issue-github-issues-format "inkel" "github-issues.el"))#5 - Add autoload marker
 #4 - Declare buffer local variables as global variable
 #3 - Add package footer for packaging convention
 #1 - Doesn't work on private repos.
