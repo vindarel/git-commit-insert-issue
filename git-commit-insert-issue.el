@@ -36,9 +36,15 @@
 (require 'github-issues)
 (require 'gitlab)
 
-(defvar git-commit-insert-issue-helm-source
+(defvar git-commit-insert-issue-github-keywords '("Fixes" "fixes" "fix" "fixed"
+                                "close" "closes" "closed"
+                                "resolve" "resolves" "resolved")
+  "List of keywords that github accepts to close issues.")
+
+;; (defvar git-commit-insert-issue-helm-source
+(setq git-commit-insert-issue-helm-source
       '((name . "Select an issue")
-        (candidates . issues-get-issues)
+        (candidates . git-commit-insert-issue-get-issues-github-or-gitlab-format)
         (action . (lambda (candidate)
                     candidate))))
 
@@ -83,16 +89,12 @@
                               issues))
         ))))
 
-(defun insert-issue-get-issues-github-or-gitlab-format ()
+(defun git-commit-insert-issue-get-issues-github-or-gitlab-format ()
   "Get the list of issues, from either github or gitlab."
   (if (string-equal "github.com" (insert-issue--get-server))
       (git-commit-insert-issue-github-issues-format)
      ;; for every other choice it's gitlab atm, since github isn't self hosted it won't have other names.
     (git-commit-insert-issue-gitlab-issues-format)))
-
-(defvar git-commit-insert-issue-github-keywords '("Fixes" "fixes" "fix" "fixed"
-                                "close" "closes" "closed"
-                                "resolve" "resolves" "resolved") "List of keywords that github accepts to close issues.")
 
 (defun git-commit-insert-issue--construct-regexp (kw)
   "From a list of words, constructs a regexp to match each one at
@@ -109,8 +111,9 @@
   (interactive)
   ;; This helm call doesn't work alone, but isn't actually needed.
   ;; (helm :sources '(issues-helm-source)))
-  (insert (ido-completing-read "Choose the issue: "
-                               (insert-issue-get-issues-github-or-gitlab-format))))
+  (let ((ido-separator "\n"))
+    (insert (ido-completing-read "Choose the issue: "
+                               (git-commit-insert-issue-get-issues-github-or-gitlab-format)))))
 
 (defun git-commit-insert-issue-gitlab-insert ()
   "Choose and insert the issue id"
@@ -181,10 +184,10 @@
       (progn
         (define-key git-commit-mode-map "#"
           (lambda () (interactive)
-            (setq git-commit-insert-issue-project-issues (git-commit-insert-issue-github-issues-format))
              (if (looking-back
                   (git-commit-insert-issue--construct-regexp git-commit-insert-issue-github-keywords))
                  (insert (git-commit-insert-issue-helm))
+                 ;; (insert (git-commit-insert-issue-ask-issues))
                (self-insert-command 1))))
         )
     (define-key git-commit-mode-map "#" (insert "#")) ;; works. Good ?
