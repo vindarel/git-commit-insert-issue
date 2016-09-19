@@ -25,6 +25,15 @@ list.
 So to always activate it:
 : (add-hook 'git-commit-mode-hook 'git-commit-insert-issue-mode)
 
+*** Connect to your Gitlab account
+Don't forget to set your gitlab credentials:
+#+BEGIN_SRC emacs-lisp
+(setq gitlab-host "https://gitlab.com"
+        gitlab-username "foo"
+        gitlab-password "password")
+#+END_SRC
+and to call =M-x gitlab-login=.
+
 ** Installation
 
 This package is in [[http://wikemacs.org/wiki/MELPA][MELPA]], so you can install it with [[http://wikemacs.org/wiki/Package.el][package.el]]:
