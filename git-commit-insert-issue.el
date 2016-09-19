@@ -99,11 +99,12 @@
 (defun git-commit-insert-issue--construct-regexp (kw)
   "From a list of words, constructs a regexp to match each one at
   a start of a line followed by a blank space:
-  (\"fix\" \"close\") => \"^fix |^close \" "
+  (\"fix\" \"close\") => \"fix |close \" "
   (let ((regexp (concat "^" (car kw) " ")))
-    (concat regexp (mapconcat (lambda (it) (concat "\\|^" it " "))
-               (cdr kw)
-               ""))))
+    (concat regexp (mapconcat (lambda (it)
+                                (concat "\\|" it " "))
+                              (cdr kw)
+                              ""))))
 
 ;;;###autoload
 (defun git-commit-insert-issue-ask-issues ()
