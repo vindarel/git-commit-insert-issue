@@ -59,7 +59,9 @@
 (defun git-commit-insert-issue-gitlab-issues ()
   "Return a list of the opened issues on gitlab."
   (or (gitlab--get-host)
-    (error "We can't find your gitlab host. Did you set gitlab-[host, username, password] and did you login ?"))
+      (error "We can't find your gitlab host. Did you set gitlab-[host, username, password] ?"))
+  (when (s-blank? gitlab-token-id)
+    (gitlab-login))
   (let* ((username (insert-issue--get-group))
          (project-name (projectile-project-name))
          (user-project (format "%s/%s" username project-name)))
