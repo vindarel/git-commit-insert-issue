@@ -41,6 +41,9 @@
                                 "resolve" "resolves" "resolved")
   "List of keywords that github accepts to close issues.")
 
+(defvar git-commit-insert-issue-gitlab-keywords '("see" "for")
+  "List of keywords to reference an issue with gitlab. Gitlab works on 'fixes' and the like, but isn't limited to them. We can reference any issue with no keyword.")
+
 ;; (defvar git-commit-insert-issue-helm-source
 (setq git-commit-insert-issue-helm-source
       '((name . "Select an issue")
@@ -188,7 +191,9 @@
         (define-key git-commit-mode-map "#"
           (lambda () (interactive)
              (if (looking-back
-                  (git-commit-insert-issue--construct-regexp git-commit-insert-issue-github-keywords))
+                  (git-commit-insert-issue--construct-regexp (append
+                                                              git-commit-insert-issue-github-keywords
+                                                              git-commit-insert-issue-gitlab-keywords)))
                  (insert (git-commit-insert-issue-helm))
                  ;; (insert (git-commit-insert-issue-ask-issues))
                (self-insert-command 1))))
