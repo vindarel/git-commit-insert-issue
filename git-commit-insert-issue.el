@@ -124,7 +124,8 @@
 (defun git-commit-insert-issue-gitlab-insert ()
   "Choose and insert the issue id"
   (interactive)
-  (insert (ido-completing-read "Gitlab issue ? " (git-commit-insert-issue-gitlab-issues-format))))
+  (let ((ido-separator "\n"))
+    (insert (ido-completing-read "Gitlab issue ? " (git-commit-insert-issue-gitlab-issues-format)))))
 
 (defun insert-issue--get-remotes ()
   "Get this repo's remote names"
