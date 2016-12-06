@@ -1,11 +1,11 @@
 ;;; git-commit-insert-issue.el --- Get issues list when typing "Fixes #"
 
-;; Copyright (C) 2015 vindarel <ehvince@mailz.org>
+;; Copyright (C) 2015-2016 vindarel <ehvince@mailz.org>
 
 ;; Author: Vindarel
 ;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
-;; Keywords: git, commit, issues
-;; Version: 0.1.0
+;; Keywords: git, github, gitlab, commit, issues
+;; Version: 0.2.0
 ;; Package-Requires: ((helm "0") (projectile "0") (s "0") (github-issues "0") (gitlab "0"))
 ;; Summary: Get issues list when typeng "Fixes #" in a commit message. github only atm.
 
@@ -26,7 +26,7 @@
 ;;
 ;; This library provides a minor mode and an interactive function to
 ;; fetch issues of your project when you type "Fixes #" in a commit
-;; message.
+;; message. Github and Gitlab.
 
 ;;; Code:
 
