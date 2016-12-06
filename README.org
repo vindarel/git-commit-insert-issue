@@ -5,9 +5,8 @@
 Goal: In a magit commit buffer, I want to complete the issue when I type
 "Fixes #".
 
-For Github and Gitlab (/Gitlab is usuable but uncomplete, see below/).
+For Github and Gitlab.
 
-I was jealous about a SublimeText plugin, this is now done with Helm.
 
 #+BEGIN_HTML
  <img src="https://gitlab.com/emacs-stuff/git-commit-insert-issue/raw/master/img.png" </img>
@@ -19,20 +18,29 @@ Activate the minor mode
 : M-x git-commit-insert-issue-mode
 
 In a magit  commit buffer (=git-commit-mode=), type "Fixes  #" (or [[https://help.github.com/articles/closing-issues-via-commit-messages/][any
-other keyword understood by github]]) and choose the issue from the helm
-list.
+other keyword understood by github]], or just a "#" for Gitlab) and choose
+the issue from the list.
 
 So to always activate it:
 : (add-hook 'git-commit-mode-hook 'git-commit-insert-issue-mode)
 
+You can also call it with
+: M-x git-commit-insert-issue-ask-issues
+
+and programmatically doing something like
+#+BEGIN_SRC emacs-lisp
+(--map (insert (concat it "\n"))
+       (git-commit-insert-issue-github-issues-format "inkel" "github-issues.el"))
+#+END_SRC
+
 *** Connect to your Gitlab account
-Don't forget to set your gitlab credentials:
+Don't forget to set your Gitlab credentials:
 #+BEGIN_SRC emacs-lisp
 (setq gitlab-host "https://gitlab.com"
-        gitlab-username "foo"
-        gitlab-password "password")
+      gitlab-username "foo"
+      gitlab-password "password")
 #+END_SRC
-and to call =M-x gitlab-login=.
+normally you would then call =M-x gitlab-login=, but the lib does it when needed.
 
 ** Installation
 
@@ -51,20 +59,22 @@ elisp source.
 - helm
 - projectile
 - s.el
+- [[https://github.com/nlamirault/emacs-gitlab][emacs-gitlab]] (see also [[https://gitlab.com/tarsius/glab][glab.el]], by Tarsius, Emacs 25 only)
 
 They are all in MELPA.
 
 ** Issues
 
+- the [[https://gitlab.com/emacs-stuff/git-commit-insert-issue/issues/5][helm integration is broken]], we then simply use ido.
 - if you play too much with it, you can reach github's rate limit.
 
-[[https://github.com/inkel/github-issues.el/issues][Issues of github-issues.el]] :
+[[https://github.com/inkel/github-issues.el/issues][Issues for github integration of github-issues.el]] :
 
-# export: both uses an org table with many columns. Eval with C-c-c
+# export: both uses an org table with many columns. Eval with C-c-c or
+# execute the line with C-x-e
 #+BEGIN_SRC emacs-lisp
-(--map (insert (concat it "\n")) (git-commit-insert-issue-github-issues-format "inkel" "github-issues.el"))#5 - Add autoload marker
-#4 - Declare buffer local variables as global variable
-#3 - Add package footer for packaging convention
+(--map (insert (concat it "\n")) (git-commit-insert-issue-github-issues-format "inkel" "github-issues.el"))
+#10 - Why not just use the gh package?
 #1 - Doesn't work on private repos.
 #+END_SRC
 
@@ -74,18 +84,17 @@ They are all in MELPA.
 #+END_SRC
 
 
-
 ** Todo
 
 - tests
 - cache
-- gitlab integration:  WIP
+- [X] gitlab integration:
   - [X] Get opened issues from gitlab
   - [X] Get a list of strings with "id - title"
   - [X] choose with ido and insert in buffer: =M-x git-commit-insert-issue-gitlab-insert=.
-  - [ ] choose github or gitlab, depending on project.
+  - [X] choose github or gitlab, depending on project.
     - [X] get the remote server in git config
   - [X]  make it work for  projects in groups (i.e,  "emacs-stuff/project" and
     not "vindarel".
     - [X] get the group name in git config
-  - [ ] error handling (bad project name, etc)
+  - [±] error handling (bad project name, etc)
