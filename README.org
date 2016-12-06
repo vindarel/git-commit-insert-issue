@@ -63,6 +63,17 @@ elisp source.
 
 They are all in MELPA.
 
+_Feedback on emacs-gitlab_: it's very  well written but monolithic and
+not  very flexible.   It has  functions for  every action  of the  api
+(glab.el  takes  another  approach,   the  developer  writes  the  api
+endpoint) but it seems it wasn't  written for practical stuff in mind.
+For  example, it  didn't have  an option  to fetch  only the  /opened/
+issues of a project, or optional  function arguments to make it easier
+to develop. See [[https://github.com/nlamirault/emacs-gitlab/pull/40][this PR]] as an example.
+
+Doc  is  missing, but  once  you  understand  that  a project  can  be
+referenced by "username/project", it's easier.
+
 ** Issues
 
 - the [[https://gitlab.com/emacs-stuff/git-commit-insert-issue/issues/5][helm integration is broken]], we then simply use ido.
