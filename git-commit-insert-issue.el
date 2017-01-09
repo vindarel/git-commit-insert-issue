@@ -182,7 +182,7 @@
          )
     group))
 
-;;;###Autoload
+;;;###autoload
 (define-minor-mode git-commit-insert-issue-mode
   "See the issues when typing 'Fixes #' in a commit message."
   :global nil
