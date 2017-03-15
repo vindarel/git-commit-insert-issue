@@ -7,6 +7,9 @@ Goal: In a magit commit buffer, I want to complete the issue when I type
 
 For Github, Gitlab and Bitbucket.
 
+For both,  it works for individual  or group projects. For  Gitlab, it
+works with private projects.
+
 
 #+BEGIN_HTML
  <img src="https://gitlab.com/emacs-stuff/git-commit-insert-issue/raw/master/img.png" </img>
