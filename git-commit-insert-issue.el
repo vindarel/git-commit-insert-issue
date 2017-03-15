@@ -59,16 +59,18 @@
 (defun git-username ()
   (s-trim (shell-command-to-string "git config user.name")))
 
-(defun git-commit-insert-issue-gitlab-issues ()
+(defun git-commit-insert-issue-project-id (&optional project username)
+  (let* ((username (or username (insert-issue--get-group)))
+         (project (or project (projectile-project-name))))
+    (format "%s/%s" username project)))
+
+(defun git-commit-insert-issue-gitlab-issues (&optional projectname username)
   "Return a list of the opened issues on gitlab."
   (or (gitlab--get-host)
       (error "We can't find your gitlab host. Did you set gitlab-[host, username, password] ?"))
   (when (s-blank? gitlab-token-id)
     (gitlab-login))
-  (let* ((username (insert-issue--get-group))
-         (project-name (projectile-project-name))
-         (user-project (format "%s/%s" username project-name)))
-    (gitlab-list-project-issues user-project nil nil '((state . "opened")))))
+  (gitlab-list-project-issues (git-commit-insert-issue-project-id) nil nil '((state . "opened"))))
 
 (defun git-commit-insert-issue-gitlab-issues-format ()
   "Get issues and return a list of strings formatted with '#id - title'"
@@ -77,7 +79,10 @@
 
 (defun git-commit-insert-issue-github-issues (&optional username project-name)
   "Return a plist of github issues, raw from the api request."
-  (github-api-repository-issues username project-name))
+  ;; (github-api-repository-issues username project-name))
+  (let ((project-name (or project-name (projectile-project-name)))
+        (username (or username (insert-issue--get-group))))
+    (github-api-repository-issues username project-name)))
 
 (defun git-commit-insert-issue-github-issues-format (&optional username project-name)
   "Get all the issues from the current project.
@@ -86,7 +91,7 @@
          (project-name (or project-name (projectile-project-name)))
          (issues (git-commit-insert-issue-github-issues username project-name)))
     (if (string= (plist-get issues ':message) "Not Found")
-          (error (concat "Nothing found with user " (git-username)))
+          (error (concat "Nothing found with user " username " in project " project-name))
       (progn
         ;;todo: watch for api rate limit.
         (setq git-commit-insert-issue-project-issues (--map
@@ -181,6 +186,7 @@
          (group (-first-item (s-split "/" (-first-item group-project)))) ;; emacs-stuff
          )
     group))
+
 
 ;;;###autoload
 (define-minor-mode git-commit-insert-issue-mode
