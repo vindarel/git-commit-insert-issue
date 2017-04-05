@@ -26,7 +26,7 @@
 ;;
 ;; This library provides a minor mode and an interactive function to
 ;; fetch issues of your project when you type "Fixes #" in a commit
-;; message. Github and Gitlab.
+;; message. Github, Gitlab and Bitbucket.
 
 ;;; Code:
 
@@ -34,6 +34,7 @@
 (require 'projectile)
 (require 's)
 (require 'github-issues)
+(require 'bitbucket)
 (require 'gitlab)
 
 (defvar git-commit-insert-issue-github-keywords '("Fixes" "fixes" "fix" "fixed"
@@ -44,10 +45,13 @@
 (defvar git-commit-insert-issue-gitlab-keywords '("see" "for")
   "List of keywords to reference an issue with gitlab. Gitlab works on 'fixes' and the like, but isn't limited to them. We can reference any issue with no keyword.")
 
+(defvar git-commit-insert-issue-bitbucket-keywords '("see" "for")
+  "Similar to Gitlab, Bitbucket can reference issues with or without keywords, see: https://confluence.atlassian.com/bitbucket/resolve-issues-automatically-when-users-push-code-221451126.html")
+
 ;; (defvar git-commit-insert-issue-helm-source
 (setq git-commit-insert-issue-helm-source
       '((name . "Select an issue")
-        (candidates . git-commit-insert-issue-get-issues-github-or-gitlab-format)
+        (candidates . git-commit-insert-issue-get-issues-github-or-gitlab-or-bitbucket-format)
         (action . (lambda (candidate)
                     candidate))))
 
@@ -94,11 +98,24 @@
                               issues))
         ))))
 
-(defun git-commit-insert-issue-get-issues-github-or-gitlab-format ()
-  "Get the list of issues, from either github or gitlab."
-  (if (string-equal "github.com" (insert-issue--get-server))
-      (git-commit-insert-issue-github-issues-format)
-     ;; for every other choice it's gitlab atm, since github isn't self hosted it won't have other names.
+(defun git-commit-insert-issue-bitbucket-issues (&optional username project-name)
+  "Return a list of bitbucket issues."
+  (let* ((username (insert-issue--get-group))
+          (project-name (projectile-project-name)))
+          (bitbucket-issues-list-all username project-name)))
+
+(defun git-commit-insert-issue-bitbucket-issues-format (&optional username project-name)
+  "Get issues and return a list of strings formatted with '#id - title'"
+  (--map (format "#%i - %s" (assoc-default 'id it) (assoc-default 'title it))
+    (git-commit-insert-issue-bitbucket-issues username project-name)))
+
+(defun git-commit-insert-issue-get-issues-github-or-gitlab-or-bitbucket-format ()
+  "Get the list of issues, from github, gitlab or bitbucket."
+  (cond ((string-equal "github.com" (insert-issue--get-server))
+          (git-commit-insert-issue-github-issues-format))
+    ((string-equal "bitbucket.org" (insert-issue--get-server))
+      (git-commit-insert-issue-bitbucket-issues-format))
+    ;; for every other choice it's gitlab atm, since github isn't self hosted it won't have other names.
     (git-commit-insert-issue-gitlab-issues-format)))
 
 (defun git-commit-insert-issue--construct-regexp (kw)
@@ -119,7 +136,7 @@
   ;; (helm :sources '(issues-helm-source)))
   (let ((ido-separator "\n"))
     (insert (ido-completing-read "Choose the issue: "
-                               (git-commit-insert-issue-get-issues-github-or-gitlab-format)))))
+                               (git-commit-insert-issue-get-issues-github-or-gitlab-or-bitbucket-format)))))
 
 (defun git-commit-insert-issue-gitlab-insert ()
   "Choose and insert the issue id"
