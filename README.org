@@ -5,7 +5,7 @@
 Goal: In a magit commit buffer, I want to complete the issue when I type
 "Fixes #".
 
-For Github and Gitlab.
+For Github, Gitlab and Bitbucket.
 
 
 #+BEGIN_HTML
@@ -109,3 +109,7 @@ referenced by "username/project", it's easier.
     not "vindarel".
     - [X] get the group name in git config
   - [±] error handling (bad project name, etc)
+
+**  Changelog
+
+- Add Bitbucket support
