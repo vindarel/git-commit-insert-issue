@@ -6,7 +6,7 @@
 ;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
 ;; Keywords: git, github, gitlab, bitbucket, commit, issues
 ;; Version: 0.2.0
-;; Package-Requires: ((helm "0") (projectile "0") (s "0") (github-issues "0") (gitlab "0"))
+;; Package-Requires: ((helm "0") (projectile "0") (s "0") (github-issues "0") (gitlab "0") (bitbucket "0"))
 ;; Summary: Get issues list when typeng "Fixes #" in a commit message. github, gitlab and bitbucket.
 
 ;; This file is NOT part of GNU Emacs.
