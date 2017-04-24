@@ -184,9 +184,8 @@
          (server (if (s-contains? ":" server-group-name)
                      (car (s-split ":" server-group-name))
                    (if (s-contains? "/" server-group-name)
-                       (car (s-split "/" server-group-name)))))
-         )
-  server))
+                       (car (s-split "/" server-group-name))))))
+    server))
 
 (defun insert-issue--get-group ()
   "The remote group can be different than the author.
@@ -199,8 +198,7 @@
          (group-project (if (s-contains? ":" server-group-name)
                             (cdr (s-split ":" server-group-name))
                           (cdr (s-split "/" server-group-name)))) ;; emacs-stuff/project-name.git
-         (group (-first-item (s-split "/" (-first-item group-project)))) ;; emacs-stuff
-         )
+         (group (-first-item (s-split "/" (-first-item group-project))))) ;; emacs-stuff
     group))
 
 
@@ -219,10 +217,8 @@
                                                               git-commit-insert-issue-gitlab-keywords)))
                  ;; (insert (git-commit-insert-issue-helm)) ;; broken helm
                  (insert (git-commit-insert-issue-ask-issues))
-               (self-insert-command 1))))
-        )
-    (define-key git-commit-mode-map "#" (insert "#")) ;; works. Good ?
-    ))
+               (self-insert-command 1)))))
+    (define-key git-commit-mode-map "#" (insert "#"))))
 
 (provide 'git-commit-insert-issue)
 
