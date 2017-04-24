@@ -112,4 +112,20 @@ referenced by "username/project", it's easier.
 
 **  Changelog
 
-- Add Bitbucket support
+*** v0.3 <2017-04-24 lun.>
+
+    - Add Bitbucket support (Tjaart van der Walt)
+
+*** v0.2
+
+    - Gitlab support: private and public, individual, groups or forks.
+      We  then consider  the project  url  and username  of the  first
+      remote to appear in the user's =.git/config=.
+    - ido (with \n) instead of helm
+    - auto gitlab login
+    - more error handling
+    - github-issues dependency in melpa
+
+*** v0.1 - release on Melpa
+
+    - Github only
