@@ -11,7 +11,7 @@ Works with *individual projects*  (repo of type username/projectname),
 *groups* (groupname/projectname) and *forks*  (where the issues are on
 the original repo).
 
-Gitlab: works with *private projects*.
+Gitlab and Bitbucket: work with *private projects*.
 
 
 #+BEGIN_HTML
@@ -39,7 +39,8 @@ and programmatically doing something like
        (git-commit-insert-issue-github-issues-format "inkel" "github-issues.el"))
 #+END_SRC
 
-*** Connect to your Gitlab account
+*** Connect to your Gitlab/Bitbucket account
+
 Don't forget to set your Gitlab credentials:
 #+BEGIN_SRC emacs-lisp
 (setq gitlab-host "https://gitlab.com"
@@ -47,6 +48,18 @@ Don't forget to set your Gitlab credentials:
       gitlab-password "password")
 #+END_SRC
 normally you would then call =M-x gitlab-login=, but the lib does it when needed.
+
+For Bitbucket, see [[https://github.com/tjaartvdwalt/bitbucket.el/#authentication][its README]], but shortly it boils down to
+
+#+BEGIN_SRC emacs-lisp
+(setq bitbucket-basic-auth "my-basic-auth-token")
+#+END_SRC
+
+or
+
+#+BEGIN_SRC shell
+export BITBUCKET_BASIC_AUTH=my-basic-auth-token
+#+END_SRC
 
 ** Installation
 
