@@ -115,11 +115,11 @@
 (defun git-commit-insert-issue-get-issues-github-or-gitlab-or-bitbucket-format ()
   "Get the list of issues, from github, gitlab or bitbucket."
   (cond ((string-equal "github.com" (insert-issue--get-server))
-          (git-commit-insert-issue-github-issues-format))
-    ((string-equal "bitbucket.org" (insert-issue--get-server))
-      (git-commit-insert-issue-bitbucket-issues-format))
-    ;; for every other choice it's gitlab atm, since github isn't self hosted it won't have other names.
-    (git-commit-insert-issue-gitlab-issues-format)))
+         (git-commit-insert-issue-github-issues-format))
+        ((string-equal "bitbucket.org" (insert-issue--get-server))
+         (git-commit-insert-issue-bitbucket-issues-format))
+        ;; for every other choice it's gitlab atm, since github isn't self hosted it won't have other names.
+        (t (git-commit-insert-issue-gitlab-issues-format))))
 
 (defun git-commit-insert-issue--construct-regexp (kw)
   "From a list of words, constructs a regexp to match each one at
