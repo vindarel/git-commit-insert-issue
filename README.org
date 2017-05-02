@@ -11,7 +11,9 @@ Works with *individual projects*  (repo of type username/projectname),
 *groups* (groupname/projectname) and *forks*  (where the issues are on
 the original repo).
 
-Gitlab and Bitbucket: work with *private projects*.
+Gitlab and Bitbucket: works with *private projects*.
+
+Bitbucket: install [[https://github.com/tjaartvdwalt/bitbucket.el/][bitbucket.el]] (in melpa).
 
 
 #+BEGIN_HTML

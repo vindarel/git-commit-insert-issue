@@ -34,7 +34,6 @@
 (require 'projectile)
 (require 's)
 (require 'github-issues)
-(require 'bitbucket)
 (require 'gitlab)
 
 (defvar git-commit-insert-issue-github-keywords '("Fixes" "fixes" "fix" "fixed"
