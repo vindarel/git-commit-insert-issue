@@ -63,6 +63,18 @@ or
 export BITBUCKET_BASIC_AUTH=my-basic-auth-token
 #+END_SRC
 
+*** Working with many remotes (and one issues source)
+
+    The first remote in your =.git/config=  will be the one we get the
+    issues from.
+
+    A  project may  have many  remote git  urls: the  upstream one  on
+    Github, your fork and a copy  on Gitlab, or maybe the original one
+    in a self-hosted Gitlab instance and a mirror on Github. Where are
+    the issues then ?  Git itself can  not tell us, so we decide we'll
+    go with  the first  remote url in  your =.git/config=.   Just edit
+    this file manually to set it right.
+
 ** Installation
 
 This package is in [[http://wikemacs.org/wiki/MELPA][MELPA]], so you can install it with [[http://wikemacs.org/wiki/Package.el][package.el]]:
