@@ -109,7 +109,9 @@ referenced by "username/project", it's easier.
 
 ** Issues
 
-- the [[https://gitlab.com/emacs-stuff/git-commit-insert-issue/issues/5][helm integration is broken]], we then simply use ido.
+- the  [[https://gitlab.com/emacs-stuff/git-commit-insert-issue/issues/5][helm  integration   is  broken]]. We   use  the  barebones
+  =completing-read= that will be superseeded by completions frameworks
+  such as ivy.
 - if you play too much with it, you can reach github's rate limit.
 
 [[https://github.com/inkel/github-issues.el/issues][Issues for github integration of github-issues.el]] :
@@ -130,8 +132,8 @@ referenced by "username/project", it's easier.
 
 ** Todo
 
-- tests
-- cache
+- [ ] tests
+- [ ] cache
 - [X] gitlab integration:
   - [X] Get opened issues from gitlab
   - [X] Get a list of strings with "id - title"
@@ -144,6 +146,11 @@ referenced by "username/project", it's easier.
   - [±] error handling (bad project name, etc)
 
 **  Changelog
+
+*** HEAD
+
+    - remove  the harcoded  =ido-completing-read=  and  make room  for
+      ivy. <2017-11-01 mer.>
 
 *** v0.3 <2017-04-24 lun.>
 

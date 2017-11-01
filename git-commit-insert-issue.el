@@ -138,14 +138,14 @@
   ;; This helm call doesn't work alone, but isn't actually needed.
   ;; (helm :sources '(issues-helm-source)))
   (let ((ido-separator "\n"))
-    (insert (ido-completing-read "Choose the issue: "
+    (insert (completing-read "Choose the issue: "
                                (git-commit-insert-issue-get-issues-github-or-gitlab-or-bitbucket-format)))))
 
 (defun git-commit-insert-issue-gitlab-insert ()
   "Choose and insert the issue id"
   (interactive)
   (let ((ido-separator "\n"))
-    (insert (ido-completing-read "Gitlab issue ? " (git-commit-insert-issue-gitlab-issues-format)))))
+    (insert (completing-read "Gitlab issue ? " (git-commit-insert-issue-gitlab-issues-format)))))
 
 (defun insert-issue--get-remotes ()
   "Get this repo's remote names"
