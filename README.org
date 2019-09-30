@@ -145,6 +145,18 @@ referenced by "username/project", it's easier.
     - [X] get the group name in git config
   - [±] error handling (bad project name, etc)
 
+** Liberapay
+
+You use this daily ? You feel like pushing me to un-rot the code ? You
+can offer me a beer :]
+
+https://liberapay.com/vindarel/
+
+Thank you <3
+
+(why? I'm working towards independance with free software projects now
+so I must practice in asking for support…)
+
 **  Changelog
 
 *** HEAD
