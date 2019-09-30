@@ -199,7 +199,7 @@
                   (git-commit-insert-issue--construct-regexp (append
                                                               git-commit-insert-issue-github-keywords
                                                               git-commit-insert-issue-gitlab-keywords)))
-                 (insert (git-commit-insert-issue-ask-issues))
+                 (git-commit-insert-issue-ask-issues)
                (self-insert-command 1)))))
     (define-key git-commit-mode-map "#" (insert "#"))))
 
