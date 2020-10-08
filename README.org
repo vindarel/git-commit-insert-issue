@@ -75,6 +75,19 @@ export BITBUCKET_BASIC_AUTH=my-basic-auth-token
     go with  the first  remote url in  your =.git/config=.   Just edit
     this file manually to set it right.
 
+
+*** Plug with ido (ivy or helm work out of the box)
+
+The code uses the default =completing-read= function to interactively
+ask for the issue. If =ivy= or =helm= are activated, they will pick it up
+and you have nothing to do.
+
+However ido-mode doesn't (strangely). So we can set the
+completing-read function to use it:
+
+: (setf git-commit-insert-issue--completing-fun #'ido-completing-read)
+
+
 ** Installation
 
 This package is in [[http://wikemacs.org/wiki/MELPA][MELPA]], so you can install it with [[http://wikemacs.org/wiki/Package.el][package.el]]:
@@ -161,6 +174,9 @@ so I must practice in asking for support…)
 
 *** HEAD
 
+    - added the variable =git-commit-insert-issue--completing-fun=, so
+      we can set it to =ido-completing-read=. Ivy and Helm work out of
+      the box. <2020-10-08 Thu>
     - remove  the harcoded  =ido-completing-read=  and  make room  for
       ivy. <2017-11-01 mer.>
 

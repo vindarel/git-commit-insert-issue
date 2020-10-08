@@ -118,13 +118,16 @@
                               (cdr kw)
                               ""))))
 
+(defvar git-commit-insert-issue--completing-fun #'completing-read)
+
 ;;;###autoload
 (defun git-commit-insert-issue-ask-issues ()
   "Ask for the issue to insert."
   (interactive)
   (let ((ido-separator "\n"))
-    (insert (completing-read "Choose the issue: "
-                               (git-commit-insert-issue-get-issues-github-or-gitlab-or-bitbucket-format)))))
+    (insert (funcall git-commit-insert-issue--completing-fun
+                     "Choose the issue: "
+                     (git-commit-insert-issue-get-issues-github-or-gitlab-or-bitbucket-format)))))
 
 (defun git-commit-insert-issue-gitlab-insert ()
   "Choose and insert the issue id"
