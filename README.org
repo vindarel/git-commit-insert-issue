@@ -122,9 +122,6 @@ referenced by "username/project", it's easier.
 
 ** Issues
 
-- the  [[https://gitlab.com/emacs-stuff/git-commit-insert-issue/issues/5][helm  integration   is  broken]]. We   use  the  barebones
-  =completing-read= that will be superseeded by completions frameworks
-  such as ivy.
 - if you play too much with it, you can reach github's rate limit.
 
 [[https://github.com/inkel/github-issues.el/issues][Issues for github integration of github-issues.el]] :
@@ -164,6 +161,8 @@ You use this daily ? You feel like pushing me to un-rot the code ? You
 can offer me a beer :]
 
 https://liberapay.com/vindarel/
+
+https://ko-fi.com/vindarel
 
 Thank you <3
 
