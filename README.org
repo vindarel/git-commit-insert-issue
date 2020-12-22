@@ -11,9 +11,7 @@ Works with *individual projects*  (repo of type username/projectname),
 *groups* (groupname/projectname) and *forks*  (where the issues are on
 the original repo).
 
-Gitlab and Bitbucket: works with *private projects*.
-
-Bitbucket: install [[https://github.com/tjaartvdwalt/bitbucket.el/][bitbucket.el]] (in melpa).
+Bitbucket: works with *private projects*. Install [[https://github.com/tjaartvdwalt/bitbucket.el/][bitbucket.el]] (in melpa).
 
 
 #+BEGIN_HTML
@@ -41,17 +39,9 @@ and programmatically doing something like
        (git-commit-insert-issue-github-issues-format "inkel" "github-issues.el"))
 #+END_SRC
 
-*** Connect to your Gitlab/Bitbucket account
+*** Connect to your Bitbucket account
 
-Don't forget to set your Gitlab credentials:
-#+BEGIN_SRC emacs-lisp
-(setq gitlab-host "https://gitlab.com"
-      gitlab-username "foo"
-      gitlab-password "password")
-#+END_SRC
-normally you would then call =M-x gitlab-login=, but the lib does it when needed.
-
-For Bitbucket, see [[https://github.com/tjaartvdwalt/bitbucket.el/#authentication][its README]], but shortly it boils down to
+See [[https://github.com/tjaartvdwalt/bitbucket.el/#authentication][its README]], but shortly it boils down to
 
 #+BEGIN_SRC emacs-lisp
 (setq bitbucket-basic-auth "my-basic-auth-token")
@@ -101,24 +91,11 @@ elisp source.
 
 *** Dependencies
 
-- [[https://github.com/inkel/github-issues.el][github-issues]]
-- helm
+- ghub (which also provides glab and is for Emacs 25+)
 - projectile
 - s.el
-- [[https://github.com/nlamirault/emacs-gitlab][emacs-gitlab]] (see also [[https://gitlab.com/tarsius/glab][glab.el]], by Tarsius, Emacs 25 only)
 
 They are all in MELPA.
-
-_Feedback on emacs-gitlab_: it's very  well written but monolithic and
-not  very flexible.   It has  functions for  every action  of the  api
-(glab.el  takes  another  approach,   the  developer  writes  the  api
-endpoint) but it seems it wasn't  written for practical stuff in mind.
-For  example, it  didn't have  an option  to fetch  only the  /opened/
-issues of a project, or optional  function arguments to make it easier
-to develop. See [[https://github.com/nlamirault/emacs-gitlab/pull/40][this PR]] as an example.
-
-Doc  is  missing, but  once  you  understand  that  a project  can  be
-referenced by "username/project", it's easier.
 
 ** Issues
 
@@ -155,7 +132,7 @@ referenced by "username/project", it's easier.
     - [X] get the group name in git config
   - [±] error handling (bad project name, etc)
 
-** Liberapay
+** Ko-fi & Liberapay
 
 You use this daily ? You feel like pushing me to un-rot the code ? You
 can offer me a beer :]
@@ -171,7 +148,13 @@ so I must practice in asking for support…)
 
 **  Changelog
 
-*** HEAD
+*** v0.4 (December, 2020)
+
+- replaced deprecated =github-issues= by =ghub=. That makes Emacs 25+
+  a requirement.
+- fixed Gitlab for public repositories.
+
+*** v0.3.2
 
     - added the variable =git-commit-insert-issue--completing-fun=, so
       we can set it to =ido-completing-read=. Ivy and Helm work out of
