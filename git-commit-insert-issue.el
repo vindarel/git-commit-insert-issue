@@ -5,8 +5,8 @@
 ;; Author: Vindarel
 ;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
 ;; Keywords: git, github, gitlab, bitbucket, commit, issues
-;; Version: 0.3.2
-;; Package-Requires: ((projectile "0") (s "0") (github-issues "0") (gitlab "0") (bitbucket "0"))
+;; Version: 0.4
+;; Package-Requires: ((projectile "0") (s "0") (ghub "0") (glab "0") (bitbucket "0"))
 ;; Summary: Get issues list when typeng "Fixes #" in a commit message. github, gitlab and bitbucket.
 
 ;; This file is NOT part of GNU Emacs.
@@ -30,10 +30,10 @@
 
 ;;; Code:
 
+(require 'ghub)
+(require 'glab)
 (require 'projectile)
 (require 's)
-(require 'github-issues)
-(require 'gitlab)
 
 (defvar git-commit-insert-issue-github-keywords '("Fixes" "fixes" "fix" "fixed"
                                 "close" "closes" "closed"
@@ -54,24 +54,34 @@
          (project (or project (projectile-project-name))))
     (format "%s/%s" username project)))
 
+(defun get-gitlab-issues (projectname username)
+  "Manual call to Gitlab's AP v4: /projects/:id/issues. Get closed issues only.
+  The project id is username%2Fprojectname.
+  TODO: auth for private projects."
+  (or projectname username
+      (error (s-concat "We can't get Gitlab issues: we don't know the project name or the user name ('" projectname "' and '" username "').")))
+  (let ((id (s-concat username "%2F" projectname)))
+    (glab-get (s-concat "/projects/" id "/issues?state=opened") nil :auth 'none)))
+
 (defun git-commit-insert-issue-gitlab-issues (&optional projectname username)
   "Return a list of the opened issues on gitlab."
   (or (gitlab--get-host)
       (error "We can't find your gitlab host. Did you set gitlab-[host, username, password] ?"))
-  (when (s-blank? gitlab-token-id)
-    (gitlab-login))
-  (gitlab-list-project-issues (git-commit-insert-issue-project-id) nil nil '((state . "opened"))))
+  (get-gitlab-issues projectname username))
 
-(defun git-commit-insert-issue-gitlab-issues-format ()
+(defun git-commit-insert-issue-gitlab-issues-format (&optional username project-name)
   "Get issues and return a list of strings formatted with '#id - title'"
-  (--map (format "#%i - %s" (assoc-default 'iid it) (assoc-default 'title it))
-                 (git-commit-insert-issue-gitlab-issues)))
+  (let* ((username (or username (insert-issue--get-group)))
+         (project-name (or project-name (projectile-project-name)))
+         (issues (git-commit-insert-issue-gitlab-issues project-name username)))
+    (--map (format "#%i - %s" (alist-get 'iid it) (alist-get 'title it))
+           issues)))
 
 (defun git-commit-insert-issue-github-issues (&optional username project-name)
   "Return a plist of github issues, raw from the api request."
   (let ((project-name (or project-name (projectile-project-name)))
         (username (or username (insert-issue--get-group))))
-    (github-api-repository-issues username project-name)))
+    (ghub-get (s-concat "/repos/" username "/" project-name "/issues") nil :auth 'none)))
 
 (defun git-commit-insert-issue-github-issues-format (&optional username project-name)
   "Get all the issues from the current project.
@@ -79,14 +89,14 @@
   (let* ((username (or username (insert-issue--get-group)))
          (project-name (or project-name (projectile-project-name)))
          (issues (git-commit-insert-issue-github-issues username project-name)))
-    (if (string= (plist-get issues ':message) "Not Found")
+    (if (string= (alist-get 'message issues) "Not Found")
           (error (concat "Nothing found with user " username " in project " project-name))
       (progn
         ;;todo: watch for api rate limit.
-        (setq git-commit-insert-issue-project-issues (--map
-                              (format "#%i - %s" (plist-get it ':number) (plist-get it ':title))
-                              issues))
-        ))))
+        (setq git-commit-insert-issue-project-issues
+              (--map
+               (format "#%i - %s" (alist-get 'number it) (alist-get 'title it))
+               issues))))))
 
 (defun git-commit-insert-issue-bitbucket-issues (&optional username project-name)
   "Return a list of bitbucket issues."
