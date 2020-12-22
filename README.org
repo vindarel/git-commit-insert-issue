@@ -153,6 +153,7 @@ so I must practice in asking for support…)
 - replaced deprecated =github-issues= by =ghub=. That makes Emacs 25+
   a requirement.
 - fixed Gitlab for public repositories.
+- fix when parsing the first remote fails, add an explicit error message.
 
 *** v0.3.2
 
