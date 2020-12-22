@@ -5,8 +5,8 @@
 ;; Author: Vindarel
 ;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
 ;; Keywords: git, github, gitlab, bitbucket, commit, issues
-;; Version: 0.3.2
-;; Package-Requires: ((projectile "0") (s "0") (github-issues "0") (gitlab "0") (bitbucket "0"))
+;; Version: 0.4
+;; Package-Requires: ((projectile "0") (s "0") (ghub "0") (gitlab "0") (bitbucket "0"))
 ;; Summary: Get issues list when typeng "Fixes #" in a commit message. github, gitlab and bitbucket.
 
 ;; This file is NOT part of GNU Emacs.
@@ -32,7 +32,7 @@
 
 (require 'projectile)
 (require 's)
-(require 'github-issues)
+(require 'ghub)
 (require 'gitlab)
 
 (defvar git-commit-insert-issue-github-keywords '("Fixes" "fixes" "fix" "fixed"
@@ -71,7 +71,7 @@
   "Return a plist of github issues, raw from the api request."
   (let ((project-name (or project-name (projectile-project-name)))
         (username (or username (insert-issue--get-group))))
-    (github-api-repository-issues username project-name)))
+    (ghub-get (s-concat "/repos/" username "/" project-name "/issues") nil :auth 'none)))
 
 (defun git-commit-insert-issue-github-issues-format (&optional username project-name)
   "Get all the issues from the current project.
@@ -79,14 +79,14 @@
   (let* ((username (or username (insert-issue--get-group)))
          (project-name (or project-name (projectile-project-name)))
          (issues (git-commit-insert-issue-github-issues username project-name)))
-    (if (string= (plist-get issues ':message) "Not Found")
+    (if (string= (alist-get 'message issues) "Not Found")
           (error (concat "Nothing found with user " username " in project " project-name))
       (progn
         ;;todo: watch for api rate limit.
-        (setq git-commit-insert-issue-project-issues (--map
-                              (format "#%i - %s" (plist-get it ':number) (plist-get it ':title))
-                              issues))
-        ))))
+        (setq git-commit-insert-issue-project-issues
+              (--map
+               (format "#%i - %s" (alist-get 'number it) (alist-get 'title it))
+               issues))))))
 
 (defun git-commit-insert-issue-bitbucket-issues (&optional username project-name)
   "Return a list of bitbucket issues."
