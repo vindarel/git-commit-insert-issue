@@ -6,8 +6,8 @@
 ;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
 ;; Keywords: git, github, gitlab, bitbucket, commit, issues
 ;; Version: 0.4.1
-;; Package-Requires: ((projectile "0") (s "0") (ghub "0") (bitbucket "0"))
-;; Summary: Get issues list when typing "Fixes #" (or another keyword) in a commit message. For Github, Gitlab and bitbucket.
+;; Package-Requires: ((emacs "25") (projectile "0") (s "0") (ghub "0") (bitbucket "0"))
+;; Summary: Get issues list when typing "Fixes #" (or another keyword) in a commit message. For Github, Gitlab and Bitbucket.
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -53,19 +53,19 @@
     "addresses" "re" "references" "ref" "refs")
   "Similar to Gitlab, Bitbucket can reference issues with or without keywords, see: https://confluence.atlassian.com/bitbucket/resolve-issues-automatically-when-users-push-code-221451126.html")
 
-(defvar +gitlab-api-error-for-project+ "HTTP error to Gitlab's API for %s. If it is not a self-hosted Gitlab, you might want to change the order of your remotes in .git/config."
+(defvar +git-commit-insert-issues-gitlab-api-error+ "HTTP error to Gitlab's API for %s. If it is not a self-hosted Gitlab, you might want to change the order of your remotes in .git/config."
   "Error message with a projectname placeholder. This can happen when we assume that a remote is a self-hosted Gitlab but is not.
   The order of the remotes in .git/config is important, we take the first one.")
 
-(defun git-username ()
+(defun git-commit-insert-issue-git-username ()
   (s-trim (shell-command-to-string "git config user.name")))
 
 (defun git-commit-insert-issue-project-id (&optional project username)
-  (let* ((username (or username (insert-issue--get-group)))
+  (let* ((username (or username (git-commit-insert-issue--get-group)))
          (project (or project (projectile-project-name))))
     (format "%s/%s" username project)))
 
-(defun get-gitlab-issues (projectname username)
+(defun git-commit-insert-issue-get-gitlab-issues (projectname username)
   "Manual call to Gitlab's AP v4: /projects/:id/issues. Get closed issues only.
   The project id is username%2Fprojectname.
   TODO: auth for private projects."
@@ -76,15 +76,15 @@
         (glab-get (s-concat "/projects/" id "/issues?state=opened") nil :auth 'none)
       (error
                                         ;XXX: catch only the HTTP error?
-       (error (format +gitlab-api-error-for-project+ username))))))
+       (error (format +git-commit-insert-issues-gitlab-api-error+ username))))))
 
 (defun git-commit-insert-issue-gitlab-issues (&optional projectname username)
   "Return a list of the opened issues on gitlab."
-  (get-gitlab-issues projectname username))
+  (git-commit-insert-issue-get-gitlab-issues projectname username))
 
 (defun git-commit-insert-issue-gitlab-issues-format (&optional username project-name)
   "Get issues and return a list of strings formatted with '#id - title'"
-  (let* ((username (or username (insert-issue--get-group)))
+  (let* ((username (or username (git-commit-insert-issue--get-group)))
          (project-name (or project-name (projectile-project-name)))
          (issues (git-commit-insert-issue-gitlab-issues project-name username)))
     (--map (format "#%i - %s" (alist-get 'iid it) (alist-get 'title it))
@@ -93,13 +93,13 @@
 (defun git-commit-insert-issue-github-issues (&optional username project-name)
   "Return a plist of github issues, raw from the api request."
   (let ((project-name (or project-name (projectile-project-name)))
-        (username (or username (insert-issue--get-group))))
+        (username (or username (git-commit-insert-issue--get-group))))
     (ghub-get (s-concat "/repos/" username "/" project-name "/issues") nil :auth 'none)))
 
 (defun git-commit-insert-issue-github-issues-format (&optional username project-name)
   "Get all the issues from the current project.
    Return a list of formatted strings: '#id - title'"
-  (let* ((username (or username (insert-issue--get-group)))
+  (let* ((username (or username (git-commit-insert-issue--get-group)))
          (project-name (or project-name (projectile-project-name)))
          (issues (git-commit-insert-issue-github-issues username project-name)))
     (if (string= (alist-get 'message issues) "Not Found")
@@ -113,7 +113,7 @@
 
 (defun git-commit-insert-issue-bitbucket-issues (&optional username project-name)
   "Return a list of bitbucket issues."
-  (let* ((username (insert-issue--get-group))
+  (let* ((username (git-commit-insert-issue--get-group))
           (project-name (projectile-project-name)))
           (bitbucket-issues-list-all username project-name)))
 
@@ -124,7 +124,7 @@
 
 (defun git-commit-insert-issue-get-issues-github-or-gitlab-or-bitbucket-format ()
   "Get the list of issues, from Github, Gitlab or Bitbucket."
-  (let ((remote-server-name (insert-issue--get-server)))
+  (let ((remote-server-name (git-commit-insert-issue--get-server)))
     (cond ((string-equal "github.com" remote-server-name)
            (git-commit-insert-issue-github-issues-format))
           ((string-equal "bitbucket.org" remote-server-name)
@@ -163,11 +163,11 @@
   (let ((ido-separator "\n"))
     (insert (completing-read "Gitlab issue ? " (git-commit-insert-issue-gitlab-issues-format)))))
 
-(defun insert-issue--get-remotes ()
+(defun git-commit-insert-issue--get-remotes ()
   "Get this repo's remote names"
   (s-split "\n" (s-trim (shell-command-to-string "git remote"))))
 
-(defun insert-issue--get-first-remote ()
+(defun git-commit-insert-issue--get-first-remote ()
   "Get the first remote name found in git config. It should be the prefered one."
   (let* ((first-remote
           (with-temp-buffer
@@ -180,13 +180,13 @@
          (first-remote (s-chop-suffix "]" first-remote)))
     first-remote))
 
-(defun insert-issue--get-remote-url ()
+(defun git-commit-insert-issue--get-remote-url ()
   "Get the url of the first remote" ;XXX: shall we ask if many remotes ?
   (shell-command-to-string (format "git config remote.%s.url"
-                                   ;; (-first-item (insert-issue--get-remotes))))) ;; -first-item may not be the one we want.
-                                   (insert-issue--get-first-remote))))
+                                   ;; (-first-item (git-commit-insert-issue--get-remotes))))) ;; -first-item may not be the one we want.
+                                   (git-commit-insert-issue--get-first-remote))))
 
-(defun insert-issue--get-server ()
+(defun git-commit-insert-issue--get-server ()
   "Return the git host name of the first remote for this project
 
   We read the .git/config file, we find the first remote:
@@ -196,7 +196,7 @@
       fetch = +refs/heads/*:refs/remotes/origin/*
 
   and we get the server part, here gitlab.com."
-  (let* ((url (insert-issue--get-remote-url)) ;; git@gitlab.com:emacs-stuff/project-name.git
+  (let* ((url (git-commit-insert-issue--get-remote-url)) ;; git@gitlab.com:emacs-stuff/project-name.git
          ;; Dealing with different protocols: git@foo:bar or https://foo/bar
          ;; Could definitely be proper.
          (server-group-name (if (s-contains? "@" url)
@@ -209,11 +209,11 @@
         (if (s-contains? "/" server-group-name)
             (car (s-split "/" server-group-name)))))))
 
-(defun insert-issue--get-group ()
+(defun git-commit-insert-issue--get-group ()
   "The remote group can be different than the author.
    From git@server.com:group/project.git, get group"
   ;; Again, dealing with git@ or https?://
-  (let* ((url (insert-issue--get-remote-url)) ;; git@gitlab.com:emacs-stuff/project-name.git
+  (let* ((url (git-commit-insert-issue--get-remote-url)) ;; git@gitlab.com:emacs-stuff/project-name.git
          (server-group-name (if (s-contains? "@" url)
                                 (-first-item (cdr (s-split "@" url)))
                               (car (cdr (s-split "://" url))))) ;; gitlab.com:emacs-stuff/project-name.git
