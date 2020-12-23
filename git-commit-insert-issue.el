@@ -4,7 +4,7 @@
 
 ;; Author: Vindarel
 ;; URL: https://gitlab.com/emacs-stuff/git-commit-insert-issue/
-;; Keywords: git, github, gitlab, bitbucket, commit, issues
+;; Keywords: tools, vc, github, gitlab, bitbucket, commit, issues
 ;; Version: 0.4.1
 ;; Package-Requires: ((emacs "25") (projectile "0") (s "0") (ghub "0") (bitbucket "0"))
 ;; Summary: Get issues list when typing "Fixes #" (or another keyword) in a commit message. For Github, Gitlab and Bitbucket.
