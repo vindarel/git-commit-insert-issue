@@ -123,13 +123,18 @@
     (git-commit-insert-issue-bitbucket-issues username project-name)))
 
 (defun git-commit-insert-issue-get-issues-github-or-gitlab-or-bitbucket-format ()
-  "Get the list of issues, from github, gitlab or bitbucket."
-  (cond ((string-equal "github.com" (insert-issue--get-server))
-         (git-commit-insert-issue-github-issues-format))
-        ((string-equal "bitbucket.org" (insert-issue--get-server))
-         (git-commit-insert-issue-bitbucket-issues-format))
-        ;; for every other choice it's gitlab atm, since github isn't self hosted it won't have other names.
-        (t (git-commit-insert-issue-gitlab-issues-format))))
+  "Get the list of issues, from Github, Gitlab or Bitbucket."
+  (let ((remote-server-name (insert-issue--get-server)))
+    (cond ((string-equal "github.com" remote-server-name)
+           (git-commit-insert-issue-github-issues-format))
+          ((string-equal "bitbucket.org" remote-server-name)
+           (git-commit-insert-issue-bitbucket-issues-format))
+          ;; for every other choice it's gitlab atm, since github isn't self hosted it won't have other names.
+          ((s-contains-p "gitlab" remote-server-name)
+           (git-commit-insert-issue-gitlab-issues-format))
+          (t
+           (message (s-concat "git-commit-insert-issue: we found a remote named " remote-server-name ", and we'll assume it is a Gitlab self-hosted server."))
+           (git-commit-insert-issue-gitlab-issues-format)))))
 
 (defun git-commit-insert-issue--construct-regexp (kw)
   "From a list of words, constructs a regexp to match each one at
@@ -182,8 +187,15 @@
                                    (insert-issue--get-first-remote))))
 
 (defun insert-issue--get-server ()
-  "Check the git host.
-   From git@server.com:group/project.git or https://server.com/group/project, get server.com"
+  "Return the git host name of the first remote for this project
+
+  We read the .git/config file, we find the first remote:
+
+  [remote \"origin\"]
+      url = git@gitlab.com:emacs-stuff/git-commit-insert-issue.git
+      fetch = +refs/heads/*:refs/remotes/origin/*
+
+  and we get the server part, here gitlab.com."
   (let* ((url (insert-issue--get-remote-url)) ;; git@gitlab.com:emacs-stuff/project-name.git
          ;; Dealing with different protocols: git@foo:bar or https://foo/bar
          ;; Could definitely be proper.
