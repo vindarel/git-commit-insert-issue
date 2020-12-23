@@ -41,9 +41,16 @@
   "List of keywords that github accepts to close issues.")
 
 (defvar git-commit-insert-issue-gitlab-keywords '("see" "for")
-  "List of keywords to reference an issue with gitlab. Gitlab works on 'fixes' and the like, but isn't limited to them. We can reference any issue with no keyword.")
+  "List of keywords to reference an issue with Gitlab. Gitlab works on 'fixes' and the like, but isn't limited to them. We can reference any issue with a sharpsign only.")
 
-(defvar git-commit-insert-issue-bitbucket-keywords '("see" "for")
+(defvar git-commit-insert-issue-bitbucket-keywords
+  '("see" "for"
+    "closing" "resolving"
+    "reopen" "reopens" "reopening"
+    "hold" "holds" "holding"
+    "wontfix"
+    "invalidate" "invalidates" "invalidated" "invalidating"
+    "addresses" "re" "references" "ref" "refs")
   "Similar to Gitlab, Bitbucket can reference issues with or without keywords, see: https://confluence.atlassian.com/bitbucket/resolve-issues-automatically-when-users-push-code-221451126.html")
 
 (defun git-username ()

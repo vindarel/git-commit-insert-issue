@@ -5,6 +5,14 @@
 Goal: In a magit commit buffer, I want to complete the issue when I type
 "Fixes #".
 
+This actaully works with any other [[https://docs.github.com/en/free-pro-team@latest/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword][keyword supported by Github]]:
+
+: close closes closed fix fixes fixed resolve resolves resolved
+
+[[https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#default-closing-pattern][Gitlab]] and [[https://support.atlassian.com/bitbucket-cloud/docs/resolve-issues-automatically-when-users-push-code/][Bitbucket]] understand more keywords, but a sharpsign =#=
+alone is enough to reference and link back to an issue. We added these
+
+
 For Github, Gitlab and Bitbucket.
 
 Works with *individual projects*  (repo of type username/projectname),
@@ -61,10 +69,39 @@ export BITBUCKET_BASIC_AUTH=my-basic-auth-token
     A  project may  have many  remote git  urls: the  upstream one  on
     Github, your fork and a copy  on Gitlab, or maybe the original one
     in a self-hosted Gitlab instance and a mirror on Github. Where are
-    the issues then ?  Git itself can  not tell us, so we decide we'll
+    the issues then?  Git itself can  not tell us, so we decide we'll
     go with  the first  remote url in  your =.git/config=.   Just edit
     this file manually to set it right.
 
+    Example:
+
+    In this example, we infer that the =foobar= remote is the one that
+    holds the issues, so we'll try an API call to =foo.com=, assuming
+    it is Gitlab. That fails (you see a nice error message).
+
+    #+BEGIN_SRC text
+    # .git/config
+    [remote "foobar"]
+	url = git@foo.com:a-private-remote/project.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+    [remote "origin"]
+	url = git@gitlab.com:emacs-stuff/git-commit-insert-issue.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+    #+end_src
+
+    You should put =origin= first:
+
+    #+BEGIN_SRC text
+    # .git/config
+    [remote "origin"]
+	url = git@gitlab.com:emacs-stuff/git-commit-insert-issue.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+    [remote "foobar"]
+	url = git@foo.com:a-private-remote/project.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+    #+end_src
+
+    We can maybe do better, discuss on [[https://gitlab.com/emacs-stuff/git-commit-insert-issue/-/issues/12][#12]].
 
 *** Plug with ido (ivy or helm work out of the box)
 
