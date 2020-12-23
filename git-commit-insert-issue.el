@@ -65,8 +65,6 @@
 
 (defun git-commit-insert-issue-gitlab-issues (&optional projectname username)
   "Return a list of the opened issues on gitlab."
-  (or (gitlab--get-host)
-      (error "We can't find your gitlab host. Did you set gitlab-[host, username, password] ?"))
   (get-gitlab-issues projectname username))
 
 (defun git-commit-insert-issue-gitlab-issues-format (&optional username project-name)
