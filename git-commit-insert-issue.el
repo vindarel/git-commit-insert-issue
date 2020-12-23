@@ -53,6 +53,10 @@
     "addresses" "re" "references" "ref" "refs")
   "Similar to Gitlab, Bitbucket can reference issues with or without keywords, see: https://confluence.atlassian.com/bitbucket/resolve-issues-automatically-when-users-push-code-221451126.html")
 
+(defvar +gitlab-api-error-for-project+ "HTTP error to Gitlab's API for %s. If it is not a self-hosted Gitlab, you might want to change the order of your remotes in .git/config."
+  "Error message with a projectname placeholder. This can happen when we assume that a remote is a self-hosted Gitlab but is not.
+  The order of the remotes in .git/config is important, we take the first one.")
+
 (defun git-username ()
   (s-trim (shell-command-to-string "git config user.name")))
 
@@ -68,7 +72,11 @@
   (or projectname username
       (error (s-concat "We can't get Gitlab issues: we don't know the project name or the user name ('" projectname "' and '" username "').")))
   (let ((id (s-concat username "%2F" projectname)))
-    (glab-get (s-concat "/projects/" id "/issues?state=opened") nil :auth 'none)))
+    (condition-case nil
+        (glab-get (s-concat "/projects/" id "/issues?state=opened") nil :auth 'none)
+      (error
+                                        ;XXX: catch only the HTTP error?
+       (error (format +gitlab-api-error-for-project+ username))))))
 
 (defun git-commit-insert-issue-gitlab-issues (&optional projectname username)
   "Return a list of the opened issues on gitlab."
