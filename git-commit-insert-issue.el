@@ -32,7 +32,7 @@
 
 (require 'ghub)
 (require 'glab)
-(require 'projectile)
+(require 'projectile)  ;; update, 2020: now only used to get the project root. Alternatives?
 (require 's)
 
 (defvar git-commit-insert-issue-github-keywords '("Fixes" "fixes" "fix" "fixed"
@@ -57,13 +57,10 @@
   "Error message with a projectname placeholder. This can happen when we assume that a remote is a self-hosted Gitlab but is not.
   The order of the remotes in .git/config is important, we take the first one.")
 
-(defun git-commit-insert-issue-git-username ()
-  (s-trim (shell-command-to-string "git config user.name")))
-
 (defun git-commit-insert-issue-project-id (&optional project username)
-  (let* ((username (or username (git-commit-insert-issue--get-group)))
-         (project (or project (projectile-project-name))))
-    (format "%s/%s" username project)))
+  (let* ((group/project (or username (git-commit-insert-issue--get-group/project)))
+         (project (or project (second group/project))))
+    (format "%s/%s" (first group/project) project)))
 
 (defun git-commit-insert-issue-get-gitlab-issues (projectname username)
   "Manual call to Gitlab's AP v4: /projects/:id/issues. Get closed issues only.
@@ -84,26 +81,26 @@
 
 (defun git-commit-insert-issue-gitlab-issues-format (&optional username project-name)
   "Get issues and return a list of strings formatted with '#id - title'"
-  (let* ((username (or username (git-commit-insert-issue--get-group)))
-         (project-name (or project-name (projectile-project-name)))
-         (issues (git-commit-insert-issue-gitlab-issues project-name username)))
+  (let* ((group/project (or username (git-commit-insert-issue--get-group/project)))
+         (project (or project-name (second group/project)))
+         (issues (git-commit-insert-issue-gitlab-issues project (first group/project))))
     (--map (format "#%i - %s" (alist-get 'iid it) (alist-get 'title it))
            issues)))
 
 (defun git-commit-insert-issue-github-issues (&optional username project-name)
   "Return a plist of github issues, raw from the api request."
-  (let ((project-name (or project-name (projectile-project-name)))
-        (username (or username (git-commit-insert-issue--get-group))))
-    (ghub-get (s-concat "/repos/" username "/" project-name "/issues") nil :auth 'none)))
+  (let ((group/project (or username (git-commit-insert-issue--get-group/project)))
+        (project (or project-name (second (group/project)))))
+    (ghub-get (s-concat "/repos/" (first group/project) "/" project "/issues") nil :auth 'none)))
 
 (defun git-commit-insert-issue-github-issues-format (&optional username project-name)
   "Get all the issues from the current project.
    Return a list of formatted strings: '#id - title'"
-  (let* ((username (or username (git-commit-insert-issue--get-group)))
-         (project-name (or project-name (projectile-project-name)))
-         (issues (git-commit-insert-issue-github-issues username project-name)))
+  (let* ((group/project (or username (git-commit-insert-issue--get-group/project)))
+         (project (or project-name (second group/project)))
+         (issues (git-commit-insert-issue-github-issues (first group/project) project)))
     (if (string= (alist-get 'message issues) "Not Found")
-          (error (concat "Nothing found with user " username " in project " project-name))
+          (error (concat "Nothing found with user " (first group/project) " in project " (second group/project)))
       (progn
         ;;todo: watch for api rate limit.
         (setq git-commit-insert-issue-project-issues
@@ -113,9 +110,9 @@
 
 (defun git-commit-insert-issue-bitbucket-issues (&optional username project-name)
   "Return a list of bitbucket issues."
-  (let* ((username (git-commit-insert-issue--get-group))
-          (project-name (projectile-project-name)))
-          (bitbucket-issues-list-all username project-name)))
+  (let* ((group/project (git-commit-insert-issue--get-group/project))
+         (project (or project-name (second group/project))))
+    (bitbucket-issues-list-all (first group/project) project)))
 
 (defun git-commit-insert-issue-bitbucket-issues-format (&optional username project-name)
   "Get issues and return a list of strings formatted with '#id - title'"
@@ -209,9 +206,11 @@
         (if (s-contains? "/" server-group-name)
             (car (s-split "/" server-group-name)))))))
 
-(defun git-commit-insert-issue--get-group ()
+(defun git-commit-insert-issue--get-group/project ()
   "The remote group can be different than the author.
-   From git@server.com:group/project.git, get group"
+   The project name can be different than the directory.
+   From git@server.com:group/project.git, get group and project.
+   Return: a list."
   ;; Again, dealing with git@ or https?://
   (let* ((url (git-commit-insert-issue--get-remote-url)) ;; git@gitlab.com:emacs-stuff/project-name.git
          (server-group-name (if (s-contains? "@" url)
@@ -222,11 +221,16 @@
                               (cdr (s-split ":" server-group-name))
                             (cdr (s-split "/" server-group-name))))) ;; emacs-stuff/project-name.git
          (group (when group-project
-                  (-first-item (s-split "/" (-first-item group-project)))))) ;; emacs-stuff
-    (if group
-        group
-      (error "git-commit-insert-issue: we did not find the project name by reading your remote URL. To help us you can make sure your first [remote] in your .git/config is one of Github, Gitlab or Bitbucket."))))
-
+                  (-first-item (s-split "/" (-first-item group-project)))))  ;; emacs-stuff
+         (project (when group-project
+                    (second (s-split "/" (-first-item group-project))))) ;; project-name.git
+         (project (when project
+                    (first (s-split "\\." project))))) ;; project-name
+    (unless group
+        (error "git-commit-insert-issue: we did not find the project's group name by reading your remote URL. To help us you can make sure your first [remote] in your .git/config is one of Github, Gitlab or Bitbucket."))
+    (unless project
+        (error "git-commit-insert-issue: we did not find the project name by reading your remote URL. To help us you can make sure your first [remote] in your .git/config is one of Github, Gitlab or Bitbucket."))
+    (list group project)))
 
 ;;;###autoload
 (define-minor-mode git-commit-insert-issue-mode
